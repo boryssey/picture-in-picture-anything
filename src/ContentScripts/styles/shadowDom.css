@@ -1,0 +1,215 @@
+.__pip-anything-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 99998;
+}
+
+:host > * {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 16px;
+}
+
+[pip-tooltip] {
+  position: relative;
+}
+
+[pip-tooltip][pip-tooltip-position-y="top"]::after {
+  bottom: calc(100% + 20px);
+}
+
+[pip-tooltip][pip-tooltip-position-y="bottom"]::after {
+  top: calc(100% + 20px);
+}
+
+[pip-tooltip][pip-tooltip-position-x="left"]::after {
+  left: 0;
+}
+
+[pip-tooltip][pip-tooltip-position-x="right"]::after {
+  right: 0;
+}
+
+[pip-tooltip][pip-tooltip-position-x="center"]::after {
+  right: 50%;
+  transform: translateX(50%);
+}
+
+[pip-tooltip]::after {
+  font-size: 12px;
+  width: 200px;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  content: attr(pip-tooltip);
+  border: 1px solid white;
+  bottom: calc(100% + 20px);
+  border-radius: 6px;
+  background-color: rgba(39, 40, 41, 0.7);
+  z-index: 100000;
+  padding: 4px 8px;
+  transition: all 150ms cubic-bezier(0.25, 0.8, 0.25, 1);
+  white-space: pre-wrap;
+}
+
+[pip-tooltip][pip-tooltip-ln2]::after {
+  content: attr(pip-tooltip) " \A " attr(pip-tooltip-ln2);
+}
+
+[pip-tooltip]:hover::after {
+  opacity: 1;
+  transition-duration: 300ms;
+}
+
+.__pip-anything-toolbar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-color: #272829;
+  padding: 10px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  color: white;
+  z-index: 99999;
+  border-radius: 8px;
+}
+
+.__pip-anything-toolbar-precise-checkbox label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.__pip-anything-toolbar-button {
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 4px 8px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.__pip-anything-toolbar-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.__pip-anything-selection-overlay {
+  position: fixed;
+  z-index: 99998;
+  background-color: rgba(174, 198, 246, 0.75);
+  pointer-events: none;
+}
+
+.__pip-anything-precise-selection {
+  position: fixed;
+  right: 40px;
+  bottom: 85px;
+  z-index: 99999;
+  background-color: #272829;
+  padding: 40px 0 46px 0;
+  color: white;
+  border-radius: 8px;
+}
+.__pip-anything-precise-selection > ul:first-of-type {
+  padding: 0 20px;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.__pip-anything-precise-selection ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  position: relative;
+}
+.__pip-anything-precise-selection li {
+  list-style-type: none;
+  border-left: 2px solid white;
+  margin-left: 1em;
+}
+.__pip-anything-precise-selection li div {
+  padding-left: 1em;
+  position: relative;
+  cursor: pointer;
+}
+.__pip-anything-precise-selection li div::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -2px;
+  bottom: 50%;
+  width: 0.75em;
+  border: 2px solid white;
+  border-top: 0 none white;
+  border-right: 0 none transparent;
+}
+.__pip-anything-precise-selection ul > li:last-child {
+  border-left: 2px solid transparent;
+}
+
+.__pip-anything-precise-selection li.current-child > div {
+  background-color: rgba(24, 74, 117, 1);
+  font-weight: bold;
+}
+.__pip-anything-precise-selection li.current-child > div::before {
+  border: 2px solid rgb(111, 191, 249);
+  border-top: 0 none rgb(111, 191, 249);
+  border-right: 0 none transparent;
+}
+
+.__pip-anything-precise-selection li.current-child > div::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  bottom: 0;
+  width: 1em;
+  height: 100%;
+  background-color: inherit;
+  z-index: -1;
+}
+
+.__pip-anything-precise-selection li > div {
+  color: rgb(111, 191, 249);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: Min(600px, 40vw);
+}
+
+.__pip-anything-precise-selection li:not(.current-child) > div:hover {
+  background-color: rgb(61, 61, 61);
+}
+
+.__pip-anything-precise-selection li > div span {
+  color: rgb(239, 147, 100);
+}
+
+.__pip-anything-tooltip-wrapper {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.__pip-anything-tooltip-wrapper svg {
+  cursor: help;
+  position: relative;
+  overflow: visible;
+}
+
+.__pip-anything-precise-selection .__pip-anything-toolbar-button {
+  position: absolute;
+  bottom: 5px;
+  right: 20px;
+}
