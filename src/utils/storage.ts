@@ -1,23 +1,21 @@
-import browser from "webextension-polyfill";
-
 type StorageValueType = string | number | boolean;
 
 export function getStorageData<T extends string>(
   storageKey: T | T[] | { [key in T]?: StorageValueType },
 ): Promise<{ [key in T]?: StorageValueType }> {
-  return browser.storage.local.get(storageKey) as Promise<{
+  return chrome.storage.local.get(storageKey) as Promise<{
     [key in T]?: StorageValueType;
   }>;
 }
 
 export const setStorageData = (data: Record<string, unknown>) =>
-  browser.storage.local.set(data);
+  chrome.storage.local.set(data);
 
 export const addStorageValueListener = (
   key: string,
   listener: (value: unknown) => void | Promise<void>,
 ) =>
-  browser.storage.local.onChanged.addListener((changes) => {
+  chrome.storage.local.onChanged.addListener((changes) => {
     if (changes[key] !== undefined) {
       const newValue = changes[key].newValue as unknown;
       newValue !== undefined && void listener(changes[key].newValue);

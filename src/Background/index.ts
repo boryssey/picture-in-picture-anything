@@ -1,7 +1,5 @@
-import browser from "webextension-polyfill";
-
 const executeScriptOnTabId = (tabId: number) => {
-  browser.scripting
+  chrome.scripting
     .executeScript({
       target: { tabId: tabId },
       files: ["content.js"],
@@ -11,7 +9,7 @@ const executeScriptOnTabId = (tabId: number) => {
     });
 };
 
-const contexts: browser.Menus.ContextType[] = [
+const contexts: chrome.contextMenus.ContextType[] = [
   "all",
   "page",
   "frame",
@@ -23,13 +21,13 @@ const contexts: browser.Menus.ContextType[] = [
   "audio",
 ];
 
-browser.contextMenus.create({
+chrome.contextMenus.create({
   contexts: contexts,
   title: "Picture-in-Picture Anything",
   id: "open-pip",
 });
 
-browser.contextMenus.onClicked.addListener((_, tab) => {
+chrome.contextMenus.onClicked.addListener((_, tab) => {
   const tabId = tab?.id;
   if (!tabId) {
     return;
@@ -37,9 +35,9 @@ browser.contextMenus.onClicked.addListener((_, tab) => {
   executeScriptOnTabId(tabId);
 });
 
-browser.commands.onCommand.addListener((command) => {
+chrome.commands.onCommand.addListener((command) => {
   if (command === "run-pip") {
-    browser.tabs
+    chrome.tabs
       .query({ active: true, currentWindow: true })
       .then((tabs) => {
         const tab = tabs[0];
@@ -58,7 +56,7 @@ browser.commands.onCommand.addListener((command) => {
   }
 });
 
-browser.action.onClicked.addListener((tab) => {
+chrome.action.onClicked.addListener((tab) => {
   const tabId = tab.id;
   if (!tabId) {
     return;

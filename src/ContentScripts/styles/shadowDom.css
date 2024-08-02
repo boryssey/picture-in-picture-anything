@@ -75,34 +75,53 @@
   left: 50%;
   transform: translate(-50%, 0);
   background-color: #272829;
-  padding: 10px;
+  padding: 15px;
   font-size: 16px;
   display: flex;
   align-items: center;
+  gap: 8px;
   color: white;
   z-index: 99999;
-  border-radius: 8px;
+  border-radius: 6px;
+  border: 1px solid hsla(0, 0%, 100%, 0.14);
 }
 
-.__pip-anything-toolbar-precise-checkbox label:has(input[type="checkbox"]) {
+.__pip-anything-toolbar label:has(input[type="checkbox"]) {
   display: flex;
   align-items: center;
   gap: 4px;
   cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid hsla(0, 0%, 100%, 0.14);
+}
+
+.__pip-anything-toolbar label:has(input[type="checkbox"]):hover {
+  border: 1px solid hsla(0, 0%, 100%, 0.17);
 }
 
 .__pip-anything-toolbar-button {
-  background-color: transparent;
-  border: 1px solid white;
-  color: white;
-  padding: 4px 8px;
-  margin: 5px;
+  background-color: white;
+  color: hsla(0, 0%, 9%, 1);
+  padding: 6px 10px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+}
+.__pip-anything-toolbar-button:hover {
+  background-color: #ccc;
 }
 
-.__pip-anything-toolbar-button:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+.__pip-anything-toolbar-button.__pip-anything-secondary {
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  border: 1px solid hsla(0, 0%, 100%, 0.14);
+}
+.__pip-anything-toolbar-button.__pip-anything-secondary:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  border: 1px solid hsla(0, 0%, 100%, 0.17);
 }
 
 .__pip-anything-selection-overlay {
@@ -120,7 +139,8 @@
   background-color: #272829;
   padding: 40px 0 46px 0;
   color: white;
-  border-radius: 8px;
+  border-radius: 6px;
+  border: 1px solid hsla(0, 0%, 100%, 0.14);
 }
 .__pip-anything-precise-selection > ul:first-of-type {
   padding: 0 20px;
@@ -208,8 +228,14 @@
   overflow: visible;
 }
 
-.__pip-anything-precise-selection .__pip-anything-toolbar-button {
+.__pip-anything-precise-selection #__pip-anything-select-precise-selection {
   position: absolute;
   bottom: 5px;
   right: 20px;
+}
+
+.__pip-anything-precise-selection #__pip-anything-cancel-precise-selection {
+  position: absolute;
+  bottom: 5px;
+  left: 20px;
 }

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Picture-in-Picture Anything",
+  "name": "Picture-in-Picture Anything - Place Any Element on Top of your screen",
   "version": "1.0",
-  "description": "An extension that allows you to use Picture-in-Picture mode on any element of any website",
+  "description": "An extension that allows you to use Picture-in-Picture mode on any element of any website.",
   "permissions": ["storage", "activeTab", "scripting", "contextMenus"],
   "action": {
     "enable_pip_overlay": "Enable Screenshot Overlay"

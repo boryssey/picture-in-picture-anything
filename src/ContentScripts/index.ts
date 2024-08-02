@@ -1,13 +1,11 @@
 //@ts-expect-error style-loader
 import shadowDomStyle from "./styles/shadowDom.css";
 
-// import browser from "webextension-polyfill";
 import {
   attachEventListeners,
   removeCrosshair,
   removeEventListeners,
 } from "./handlers";
-import browser from "webextension-polyfill";
 
 export const CLASSNAME_PREFIX = "__pip-anything";
 
@@ -43,7 +41,7 @@ const createShadowRoot = () => {
       font-family: 'Inter';
       font-style: italic;
       font-weight: 100 900;
-      src: URL('${browser.runtime.getURL("fonts/Inter.ttf")}') format('truetype');
+      src: URL('${chrome.runtime.getURL("fonts/Inter.ttf")}') format('truetype');
     }
   `;
   shadowRoot.appendChild(style);

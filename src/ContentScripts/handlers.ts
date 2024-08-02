@@ -8,11 +8,11 @@ import {
   getRelevantStyles,
 } from "@src/utils/helpers";
 import { StorageValue } from "@src/utils/storage";
+import { createCheckbox, createToolbarButton } from "./dom";
 import {
   buildPreciseSelectionPanel,
-  createCheckbox,
-  createToolbarButton,
-} from "./dom";
+  getPreciseSelectionContainer,
+} from "./components/PreciseSelectionPanel";
 
 let selectedElement: HTMLElement | null = null;
 let elementOverlay: HTMLElement | null = null;
@@ -99,10 +99,10 @@ const setPreciseSelectionElement = (element: HTMLElement) => {
       selectedElement = element;
       buildSelectionOverlay();
     },
-    mouseout: (_element: HTMLElement) => (_e: Event) => {
-      selectedElement = null;
-      buildSelectionOverlay();
-    },
+    // mouseout: (_element: HTMLElement) => (_e: Event) => {
+    //   selectedElement = null;
+    //   buildSelectionOverlay();
+    // },
     click: (element: HTMLElement) => (_e: Event) => {
       selectedElement = element;
       buildSelectionOverlay();
@@ -134,23 +134,14 @@ const handleElementClick = (e: Event) => {
   if (!selectedElement || !(selectedElement instanceof HTMLElement)) {
     return;
   }
-  const isPreciseSelectionMode = preciseSelectionValue.getLocal();
-
-  if (e.shiftKey || isPreciseSelectionMode) {
+  const isPreciseSelectionMode = !!preciseSelectionValue.getLocal();
+  const preciseSelectionContainerExists = !!getPreciseSelectionContainer();
+  if (e.shiftKey || isPreciseSelectionMode || preciseSelectionContainerExists) {
     setPreciseSelectionElement(selectedElement);
-    removeCrosshair();
-    document.removeEventListener("mousemove", handleMouseMoveEvent);
-    document.removeEventListener("click", handleElementClick, {
-      capture: true,
-    });
     return;
   }
 
   createPictureInPicture(selectedElement).catch((e) => console.error(e));
-  document.removeEventListener("mousemove", handleMouseMoveEvent);
-  document.removeEventListener("click", handleElementClick, {
-    capture: true,
-  });
 };
 
 const copyStylesIntoPipWindow = (pipWindow: Window, element: HTMLElement) => {
@@ -172,6 +163,11 @@ const saveQuerySelector = (element: HTMLElement) => {
 
 const createPictureInPicture = async (element: HTMLElement) => {
   closeTool();
+  removeCrosshair();
+  document.removeEventListener("mousemove", handleMouseMoveEvent);
+  document.removeEventListener("click", handleElementClick, {
+    capture: true,
+  });
   saveQuerySelector(element);
 
   if (!("documentPictureInPicture" in window)) {
@@ -219,34 +215,9 @@ const createToolbar = () => {
   const controlPanel = shadowRoot.appendChild(
     createElementWithClassNames("div", `${CLASSNAME_PREFIX}-toolbar`),
   );
-  const { label, checkbox } = createCheckbox({
-    label: "Precise Selection",
-    tooltipText: 'You can also press "Shift" when you click on an element',
-    onChange: (e) => {
-      const { checked } = e.target as HTMLInputElement;
-      preciseSelectionValue.set(checked).catch((e) => console.error(e));
-    },
-    checkboxProps: {
-      attributes: {
-        type: "checkbox",
-        id: `${CLASSNAME_PREFIX}-precise-checkbox`,
-      },
-      className: `${CLASSNAME_PREFIX}-checkbox`,
-    },
-  });
 
-  preciseSelectionValue
-    .get()
-    .then((value) => {
-      checkbox.checked = !!value;
-    })
-    .catch((e) => console.error(e));
+  const lastUsedElementButton = createToolbarButton("Last Used Element");
 
-  controlPanel.appendChild(label);
-
-  const lastUsedElementButton = controlPanel.appendChild(
-    createToolbarButton("Last Used Element"),
-  );
   lastUsedElementButton.style.display = "none";
   lastUsedElementQuerySelector
     .get()
@@ -263,7 +234,34 @@ const createToolbar = () => {
       });
     })
     .catch((e) => console.error(e));
-  controlPanel.appendChild(createToolbarButton("Close", closeTool));
+
+  const { label, checkbox } = createCheckbox({
+    label: "Precise Selection",
+    tooltipText: 'You can also press "Shift" when you click on an element',
+    onChange: (e) => {
+      const { checked } = e.target as HTMLInputElement;
+      preciseSelectionValue.set(checked).catch((e) => console.error(e));
+    },
+    checkboxProps: {
+      attributes: {
+        type: "checkbox",
+        id: `${CLASSNAME_PREFIX}-precise-checkbox`,
+      },
+      className: `${CLASSNAME_PREFIX}-checkbox`,
+    },
+  });
+  const closeButton = createToolbarButton("Close", closeTool);
+  closeButton.classList.add(`${CLASSNAME_PREFIX}-secondary`);
+  controlPanel.appendChild(closeButton);
+  controlPanel.appendChild(label);
+  controlPanel.appendChild(lastUsedElementButton);
+
+  preciseSelectionValue
+    .get()
+    .then((value) => {
+      checkbox.checked = !!value;
+    })
+    .catch((e) => console.error(e));
 };
 
 export const attachEventListeners = () => {
