@@ -3,9 +3,10 @@ import debounce from "lodash/debounce";
 import {
   copyStyleSheetIntoPipWindow,
   createElementWithClassNames,
-  createQuerySelector,
+  deserializeQuerySelector,
   getElementBackgroundColor,
   getRelevantStyles,
+  getSerializedQuerySelector,
 } from "@src/utils/helpers";
 import { StorageValue } from "@src/utils/storage";
 import { createCheckbox, createToolbarButton } from "./dom";
@@ -157,23 +158,36 @@ const copyStylesIntoPipWindow = (pipWindow: Window, element: HTMLElement) => {
 };
 
 const saveQuerySelector = (element: HTMLElement) => {
-  const queryString = createQuerySelector(element);
-  lastUsedElementQuerySelector.set(queryString).catch((e) => console.error(e));
+  const querySelectorString = getSerializedQuerySelector(element);
+  lastUsedElementQuerySelector
+    .set(querySelectorString)
+    .catch((e) => console.error(e));
+};
+
 const getPipWindowSizeProportions = (
   elementWidth: number,
   elementHeight: number,
 ) => {
-  const aspectRatio = elementWidth / elementHeight;
+  let width = elementWidth;
+  let height = elementHeight;
+  if (elementWidth === 0 || elementHeight === 0) {
+    width = window.innerWidth;
+    height = window.innerHeight;
+  }
+  const aspectRatio = width / height;
   const maxWidth = 500;
   const maxHeight = 500;
 
-  if (elementWidth < maxWidth && elementHeight < maxHeight) {
-    return { width: elementWidth, height: elementHeight };
+  if (width > height) {
+    width = Math.min(maxWidth, elementWidth);
+    return { width, height: width / aspectRatio };
   }
+  height = Math.min(maxHeight, elementHeight);
 
-  return elementWidth > elementHeight
-    ? { width: maxWidth, height: maxWidth / aspectRatio }
-    : { width: maxHeight * aspectRatio, height: maxHeight };
+  return {
+    width: height * aspectRatio,
+    height,
+  };
 };
 
 const createPictureInPicture = async (element: HTMLElement) => {
@@ -217,6 +231,7 @@ const createPictureInPicture = async (element: HTMLElement) => {
     const newEvent = new Event("resize", { ...e });
     window.dispatchEvent(newEvent);
   });
+
   pipWindow.addEventListener("pagehide", () => {
     if (previousSibling) {
       previousSibling?.after(element);
@@ -248,7 +263,13 @@ const createToolbar = () => {
     .get()
     .then((value) => {
       if (!value) return;
-      const element = document.querySelector(value);
+      const { querySelectorString, nThChildSelectorString } =
+        deserializeQuerySelector(value);
+
+      const element =
+        document.querySelector(querySelectorString) ??
+        document.querySelector(nThChildSelectorString);
+
       if (!element) return;
       lastUsedElementButton.style.display = "block";
       lastUsedElementButton.addEventListener("click", () => {

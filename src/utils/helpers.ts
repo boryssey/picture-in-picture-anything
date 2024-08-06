@@ -72,6 +72,21 @@ export const createQuerySelector = (element: HTMLElement, deep = 4): string => {
   return selector;
 };
 
+export const createQuerySelectorNthChild = (element: HTMLElement): string => {
+  const parent = element.parentElement;
+  const tagName = element.tagName.toLowerCase();
+  if (element.id) {
+    return `#${element.id}`;
+  }
+  if (!parent) {
+    return tagName.toLowerCase();
+  }
+  const children = Array.from(parent.children);
+  const index = children.indexOf(element);
+  const parentSelector = createQuerySelectorNthChild(parent);
+  return `${parentSelector} > ${tagName}:nth-child(${index + 1})`;
+};
+
 export function synchronizeCssStyles(
   src: HTMLElement,
   destination: HTMLElement,
@@ -96,7 +111,6 @@ export function synchronizeCssStyles(
     for (let i = vSrcElements.length; i--; ) {
       const vSrcElement = vSrcElements[i];
       const vDstElement = vDstElements[i];
-      //          console.log(i + " >> " + vSrcElement + " :: " + vDstElement);
       if (document.defaultView) {
         if (vDstElement instanceof HTMLElement) {
           vDstElement.style.cssText = document.defaultView.getComputedStyle(
@@ -135,7 +149,6 @@ export const deepElementCopy = (element: Element) => {
   const children = Array.from(element.children);
   for (const child of children) {
     const newChild = deepElementCopy(child);
-    // console.log("🚀 ~ deepElementCopy ~ newChild:", newChild);
     clone.append(newChild);
   }
 
@@ -188,4 +201,24 @@ export const copyStyleSheetIntoPipWindow = (
       pipWindow.document.head.appendChild(link);
     }
   });
+};
+
+const separator = "✪";
+
+export const getSerializedQuerySelector = (element: HTMLElement) => {
+  const querySelectorString = createQuerySelector(element);
+  const nThChildSelectorString = createQuerySelectorNthChild(element);
+  return `${querySelectorString}${separator}${nThChildSelectorString}`;
+};
+
+export const deserializeQuerySelector = (serializedQuerySelector: string) => {
+  if (!serializedQuerySelector.includes(separator)) {
+    return {
+      querySelectorString: serializedQuerySelector,
+      nThChildSelectorString: "",
+    };
+  }
+  const [querySelectorString, nThChildSelectorString] =
+    serializedQuerySelector.split(separator);
+  return { querySelectorString, nThChildSelectorString };
 };
