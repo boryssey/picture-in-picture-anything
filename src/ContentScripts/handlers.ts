@@ -159,6 +159,21 @@ const copyStylesIntoPipWindow = (pipWindow: Window, element: HTMLElement) => {
 const saveQuerySelector = (element: HTMLElement) => {
   const queryString = createQuerySelector(element);
   lastUsedElementQuerySelector.set(queryString).catch((e) => console.error(e));
+const getPipWindowSizeProportions = (
+  elementWidth: number,
+  elementHeight: number,
+) => {
+  const aspectRatio = elementWidth / elementHeight;
+  const maxWidth = 500;
+  const maxHeight = 500;
+
+  if (elementWidth < maxWidth && elementHeight < maxHeight) {
+    return { width: elementWidth, height: elementHeight };
+  }
+
+  return elementWidth > elementHeight
+    ? { width: maxWidth, height: maxWidth / aspectRatio }
+    : { width: maxHeight * aspectRatio, height: maxHeight };
 };
 
 const createPictureInPicture = async (element: HTMLElement) => {
@@ -176,9 +191,19 @@ const createPictureInPicture = async (element: HTMLElement) => {
     return;
   }
 
+  const boundingRect = element.getBoundingClientRect();
+  const { width, height } = boundingRect;
+  const { width: pipWidth, height: pipHeight } = getPipWindowSizeProportions(
+    width,
+    height,
+  );
+
   const { previousSibling, nextSibling, parentElement: parent } = element;
   const pipWindow = await documentPictureInPicture
-    .requestWindow()
+    .requestWindow({
+      width: pipWidth,
+      height: pipHeight,
+    })
     .catch((e) => {
       console.error("error while requesting window", e);
       throw new Error("Error while requesting window");
