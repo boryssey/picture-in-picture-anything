@@ -33,8 +33,15 @@ export const removeCrosshair = () => {
   }
 };
 
-export const setSelection = (element: HTMLElement | null) => {
+export const setSelection = (
+  element: HTMLElement | null,
+  withCrosshair?: boolean,
+) => {
+  removeCrosshair();
   selectedElement = element;
+  if (withCrosshair && element) {
+    element.style.cursor = "crosshair";
+  }
   buildSelectionOverlay();
 };
 
@@ -78,35 +85,20 @@ const handleMouseMoveEvent = debounce((e: Event) => {
   if (shadowHost.contains(elementAtPoint)) {
     return;
   }
-  const isPreciseSelectionMode = preciseSelectionValue.getLocal();
-  if (e.shiftKey || isPreciseSelectionMode) {
-    elementAtPoint.style.cursor = "crosshair";
-  } else {
-    elementAtPoint.style.cursor = "";
-  }
-  if (elementAtPoint !== selectedElement) {
-    if (selectedElement) {
-      selectedElement.style.cursor = "";
-    }
+  const isPreciseSelectionMode = e.shiftKey || preciseSelectionValue.getLocal();
 
-    selectedElement = elementAtPoint;
+  if (elementAtPoint !== selectedElement) {
+    setSelection(elementAtPoint, isPreciseSelectionMode);
   }
-  buildSelectionOverlay();
 }, 10);
 
 const setPreciseSelectionElement = (element: HTMLElement) => {
   const listItemHandlers = {
     mouseover: (element: HTMLElement) => (_e: Event) => {
-      selectedElement = element;
-      buildSelectionOverlay();
+      setSelection(element);
     },
-    // mouseout: (_element: HTMLElement) => (_e: Event) => {
-    //   selectedElement = null;
-    //   buildSelectionOverlay();
-    // },
     click: (element: HTMLElement) => (_e: Event) => {
-      selectedElement = element;
-      buildSelectionOverlay();
+      setSelection(element);
       setPreciseSelectionElement(element);
     },
   };
@@ -274,8 +266,7 @@ const createToolbar = () => {
       lastUsedElementButton.style.display = "block";
       lastUsedElementButton.addEventListener("click", () => {
         element.scrollIntoView({ behavior: "smooth", block: "center" });
-        selectedElement = element as HTMLElement;
-        buildSelectionOverlay();
+        setSelection(element as HTMLElement);
         setPreciseSelectionElement(element as HTMLElement);
       });
     })
