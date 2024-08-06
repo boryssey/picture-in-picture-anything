@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Picture-in-Picture Anything - Place Any Element on Top of your screen",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "An extension that allows you to use Picture-in-Picture mode on any element of any website.",
   "permissions": ["storage", "activeTab", "scripting", "contextMenus"],
   "action": {
