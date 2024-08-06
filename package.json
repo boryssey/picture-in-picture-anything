@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "dev": "node scripts/server.js",
-    "pack": "zip -r pip-anything-extension.zip dist",
+    "zip": "zip -r pip-anything-extension.zip dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:analyze": "ANALYZE=true webpack"
   },
