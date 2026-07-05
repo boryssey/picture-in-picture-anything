@@ -13,7 +13,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "noEmit": false,
-    "types": ["chrome"],
+    "types": [],
     "paths": {
       "@src/*": ["./src/*"]
     }

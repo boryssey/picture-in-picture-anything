@@ -1,3 +1,5 @@
+import browser from "webextension-polyfill";
+
 const logger = (msg) => {
   console.log(`[BGC] ${msg}`);
 };
@@ -34,8 +36,7 @@ es.addEventListener("background-updated", () => {
   logger("extension will reload to reload background...");
   // setTimeout(() => {
 
-  //TODO: Change to polyfill
-  chrome.runtime.reload();
+  browser.runtime.reload();
   // }, 5000);
   // reload extension to reload background.
 });
@@ -44,28 +45,33 @@ es.addEventListener(
   "content-scripts-updated",
   () => {
     logger("received 'content-scripts-updated' event from SSE service.");
-    //TODO: Change to polyfill
-    chrome.tabs.query({}, (tabs) => {
-      tabs.forEach((tab) => {
-        chrome.tabs.sendMessage(
-          tab.id,
-          {
-            from: "backgroundClient",
-            action: "reload-yourself",
-          },
-          (res) => {
-            if (chrome.runtime.lastError && !res) return;
+    browser.tabs
+      .query({})
+      .then((tabs) => {
+        tabs.forEach((tab) => {
+          browser.tabs
+            .sendMessage(tab.id, {
+              from: "backgroundClient",
+              action: "reload-yourself",
+            })
+            .then((res) => {
+              if (!res) return;
 
-            const { from, action } = res;
-            if (from === "contentScriptClient" && action === "yes-sir") {
-              es.close();
-              logger("extension will reload to update content scripts...");
-              chrome.runtime.reload();
-            }
-          },
-        );
+              const { from, action } = res;
+              if (from === "contentScriptClient" && action === "yes-sir") {
+                es.close();
+                logger("extension will reload to update content scripts...");
+                browser.runtime.reload();
+              }
+            })
+            .catch(() => {
+              // tab has no content-script listener — ignore (was the runtime.lastError guard)
+            });
+        });
+      })
+      .catch(() => {
+        // ignore tabs.query errors
       });
-    });
   },
   false,
 );

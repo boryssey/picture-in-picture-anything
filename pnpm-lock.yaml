@@ -8,14 +8,14 @@ dependencies:
   lodash:
     specifier: ^4.17.21
     version: 4.18.1
+  webextension-polyfill:
+    specifier: ^0.12.0
+    version: 0.12.0
 
 devDependencies:
   '@eslint/js':
     specifier: ^10.0.1
     version: 10.0.1(eslint@10.6.0)
-  '@types/chrome':
-    specifier: ^0.2.2
-    version: 0.2.2
   '@types/lodash':
     specifier: ^4.17.7
     version: 4.17.24
@@ -79,9 +79,6 @@ devDependencies:
   typescript-eslint:
     specifier: ^8.62.1
     version: 8.62.1(eslint@10.6.0)(typescript@6.0.3)
-  webextension-polyfill:
-    specifier: ^0.12.0
-    version: 0.12.0
   webpack:
     specifier: ^5.101.0
     version: 5.108.4(postcss@8.5.16)(webpack-cli@7.2.1)
@@ -610,13 +607,6 @@ packages:
       '@types/node': 24.13.2
     dev: true
 
-  /@types/chrome@0.2.2:
-    resolution: {integrity: sha512-8rSMZ4cvo2xmaSyQg0sN5yRL7oiDkntLoiHxUhfwQnv1mvnkrdoZ25SlNrKWmYKaeP50WvrfWj1pmc02+U9KKw==}
-    dependencies:
-      '@types/filesystem': 0.0.36
-      '@types/har-format': 1.2.16
-    dev: true
-
   /@types/connect-history-api-fallback@1.5.4:
     resolution: {integrity: sha512-n6Cr2xS1h4uAulPRdlw6Jl6s1oG8KrVilPN2yUITEs+K48EzMJJ3W1xy8K5eWuFvjp3R74AOIGSmp2UfBJ8HFw==}
     dependencies:
@@ -655,25 +645,11 @@ packages:
       '@types/serve-static': 2.2.0
     dev: true
 
-  /@types/filesystem@0.0.36:
-    resolution: {integrity: sha512-vPDXOZuannb9FZdxgHnqSwAG/jvdGM8Wq+6N4D/d80z+D4HWH+bItqsZaVRQykAn6WEVeEkLm2oQigyHtgb0RA==}
-    dependencies:
-      '@types/filewriter': 0.0.33
-    dev: true
-
-  /@types/filewriter@0.0.33:
-    resolution: {integrity: sha512-xFU8ZXTw4gd358lb2jw25nxY9QAgqn2+bKKjKOYfNCzN4DKCFetK7sPtrlpg66Ywe3vWY9FNxprZawAh9wfJ3g==}
-    dev: true
-
   /@types/glob@7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
       '@types/minimatch': 6.0.0
       '@types/node': 20.19.43
-    dev: true
-
-  /@types/har-format@1.2.16:
-    resolution: {integrity: sha512-fluxdy7ryD3MV6h8pTfTYpy/xQzCFC7m89nOH9y94cNqJ1mDIDPut7MnRHI3F6qRmh/cT2fUjG1MLdCNb4hE9A==}
     dev: true
 
   /@types/html-minifier-terser@6.1.0:
@@ -3644,7 +3620,7 @@ packages:
 
   /webextension-polyfill@0.12.0:
     resolution: {integrity: sha512-97TBmpoWJEE+3nFBQ4VocyCdLKfw54rFaJ6EVQYLBCXqCIpLSZkwGgASpv4oPt9gdKCJ80RJlcmNzNn008Ag6Q==}
-    dev: true
+    dev: false
 
   /webpack-bundle-analyzer@5.3.0:
     resolution: {integrity: sha512-PEhAoqiJ+47d0uLMx/+zo5XOvaU+Vk6N2ZLht7H3n09QLy/fhyvqGNwjdRUHJDgMN8crBR2ZwVHkIswT3Xuawg==}

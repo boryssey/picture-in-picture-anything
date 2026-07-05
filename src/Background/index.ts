@@ -1,5 +1,7 @@
+import browser from "webextension-polyfill";
+
 const executeScriptOnTabId = (tabId: number) => {
-  chrome.scripting
+  browser.scripting
     .executeScript({
       target: { tabId: tabId },
       files: ["content.js"],
@@ -9,7 +11,7 @@ const executeScriptOnTabId = (tabId: number) => {
     });
 };
 
-chrome.contextMenus.create({
+browser.contextMenus.create({
   contexts: [
     "all",
     "page",
@@ -25,7 +27,7 @@ chrome.contextMenus.create({
   id: "open-pip",
 });
 
-chrome.contextMenus.onClicked.addListener((_, tab) => {
+browser.contextMenus.onClicked.addListener((_, tab) => {
   const tabId = tab?.id;
   if (!tabId) {
     return;
@@ -33,9 +35,9 @@ chrome.contextMenus.onClicked.addListener((_, tab) => {
   executeScriptOnTabId(tabId);
 });
 
-chrome.commands.onCommand.addListener((command) => {
+browser.commands.onCommand.addListener((command) => {
   if (command === "run-pip") {
-    chrome.tabs
+    browser.tabs
       .query({ active: true, currentWindow: true })
       .then((tabs) => {
         const tab = tabs[0];
@@ -54,7 +56,7 @@ chrome.commands.onCommand.addListener((command) => {
   }
 });
 
-chrome.action.onClicked.addListener((tab) => {
+browser.action.onClicked.addListener((tab) => {
   const tabId = tab.id;
   if (!tabId) {
     return;
