@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 process.env.BABEL_ENV = "development";
 process.env.NODE_ENV = "development";
 process.env.ASSET_PATH = "/";

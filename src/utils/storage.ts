@@ -1,11 +1,9 @@
 type StorageValueType = string | number | boolean;
 
 export function getStorageData<T extends string>(
-  storageKey: T | T[] | { [key in T]?: StorageValueType },
-): Promise<{ [key in T]?: StorageValueType }> {
-  return chrome.storage.local.get(storageKey) as Promise<{
-    [key in T]?: StorageValueType;
-  }>;
+  storageKey: T | T[] | Partial<Record<T, StorageValueType>>,
+): Promise<Partial<Record<T, StorageValueType>>> {
+  return chrome.storage.local.get(storageKey);
 }
 
 export const setStorageData = (data: Record<string, unknown>) =>
@@ -17,8 +15,8 @@ export const addStorageValueListener = (
 ) =>
   chrome.storage.local.onChanged.addListener((changes) => {
     if (changes[key] !== undefined) {
-      const newValue = changes[key].newValue as unknown;
-      newValue !== undefined && void listener(changes[key].newValue);
+      const newValue = changes[key].newValue;
+      if (newValue !== undefined) void listener(changes[key].newValue);
     }
   });
 

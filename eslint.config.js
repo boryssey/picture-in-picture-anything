@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 // @ts-check
 
 // import eslint from "@eslint/js";
@@ -25,6 +25,9 @@ const globals = require("globals");
 // });
 
 module.exports = tseslint.config(
+  {
+    ignores: ["dist/**"],
+  },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,

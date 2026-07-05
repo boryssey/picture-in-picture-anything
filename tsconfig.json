@@ -10,14 +10,13 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "noEmit": false,
-    "baseUrl": "src/",
+    "types": ["chrome"],
     "paths": {
-      "@src/*": ["*"]
+      "@src/*": ["./src/*"]
     }
   },
-
   "exclude": ["build", "node_modules"]
 }

@@ -15,10 +15,11 @@ export const createElementWithAttributes = (
 ) => {
   const newElement = document.createElement(tagName);
 
-  attributes &&
+  if (attributes) {
     Object.entries(attributes).forEach(([key, value]) => {
       newElement.setAttribute(key, value);
     });
+  }
 
   newElement.classList.add(...className);
 
@@ -108,7 +109,7 @@ export function synchronizeCssStyles(
     const vSrcElements = src.getElementsByTagName("*");
     const vDstElements = destination.getElementsByTagName("*");
 
-    for (let i = vSrcElements.length; i--; ) {
+    for (let i = vSrcElements.length; i--;) {
       const vSrcElement = vSrcElements[i];
       const vDstElement = vDstElements[i];
       if (document.defaultView) {

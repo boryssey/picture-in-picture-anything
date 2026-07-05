@@ -81,7 +81,7 @@ export const createPreciseElementSelectionList = (
       : null;
 
   getElementTree({ listItemEventHandlers, selectedElementClickHandler })(
-    parentElement ? parentElement : element,
+    parentElement ?? element,
     ul,
     element,
     parentElement ? 0 : 1,
@@ -143,9 +143,7 @@ export const buildPreciseSelectionPanel = (
 
   let container = getPreciseSelectionContainer();
 
-  if (!container) {
-    container = createPreciseSelectionContainer();
-  }
+  container ??= createPreciseSelectionContainer();
   container.style.display = "block";
   const tooltip = container.firstElementChild!;
   const selectButton = shadowRoot.getElementById(

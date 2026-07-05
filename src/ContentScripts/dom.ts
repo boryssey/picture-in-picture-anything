@@ -63,7 +63,7 @@ export const createToolbarButton = (
     `${CLASSNAME_PREFIX}-toolbar-button`,
   );
   button.textContent = text;
-  handler && button.addEventListener("click", handler);
+  if (handler) button.addEventListener("click", handler);
   return button;
 };
 

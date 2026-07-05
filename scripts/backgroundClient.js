@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const querystring = require("querystring");
-
 const logger = (msg) => {
   console.log(`[BGC] ${msg}`);
 };
@@ -9,7 +6,7 @@ logger("background client up.");
 
 logger("connecting to SSE service...");
 // eslint-disable-next-line no-undef
-const port = querystring.parse(__resourceQuery.slice(1)).port;
+const port = new URLSearchParams(__resourceQuery).get("port");
 const es = new EventSource(`http://localhost:${port}/__server_sent_events__`);
 
 es.addEventListener(

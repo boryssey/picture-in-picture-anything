@@ -9,20 +9,18 @@ const executeScriptOnTabId = (tabId: number) => {
     });
 };
 
-const contexts: chrome.contextMenus.ContextType[] = [
-  "all",
-  "page",
-  "frame",
-  "selection",
-  "link",
-  "editable",
-  "image",
-  "video",
-  "audio",
-];
-
 chrome.contextMenus.create({
-  contexts: contexts,
+  contexts: [
+    "all",
+    "page",
+    "frame",
+    "selection",
+    "link",
+    "editable",
+    "image",
+    "video",
+    "audio",
+  ],
   title: "Picture-in-Picture Anything",
   id: "open-pip",
 });
