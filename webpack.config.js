@@ -6,7 +6,6 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const BundleAnalyzerPlugin =
   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
-const TerserPlugin = require("terser-webpack-plugin");
 const EmitManifestPlugin = require("./scripts/emitManifestPlugin.js");
 
 const targetBrowser = process.env.BROWSER === "firefox" ? "firefox" : "chrome";
@@ -42,6 +41,9 @@ const options = {
     path: path.join(__dirname, "dist", targetBrowser),
     clean: true,
     filename: "[name].js",
+    // Use globalThis directly so webpack's global runtime doesn't emit the
+    // `new Function('return this')` fallback (web-ext DANGEROUS_EVAL warning).
+    globalObject: "globalThis",
   },
   resolve: {
     alias,
@@ -105,8 +107,7 @@ if (process.env.NODE_ENV === "development") {
 } else {
   options.optimization = {
     usedExports: true,
-    minimize: true,
-    minimizer: [new TerserPlugin()],
+    minimize: false,
   };
 }
 

@@ -1,5 +1,5 @@
 import { CLASSNAME_PREFIX, closeTool, getShadowHost } from ".";
-import debounce from "lodash/debounce";
+import { debounce } from "@src/utils/debounce";
 import {
   createElementWithClassNames,
   deserializeQuerySelector,

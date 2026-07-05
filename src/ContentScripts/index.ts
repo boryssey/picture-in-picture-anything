@@ -37,7 +37,7 @@ const createShadowRoot = () => {
   document.body.appendChild(shadowHost);
   const shadowRoot = shadowHost.attachShadow({ mode: "open" });
   const style = document.createElement("style");
-  style.innerHTML = `
+  style.textContent = `
     @font-face {
       font-family: 'Inter';
       font-style: italic;
