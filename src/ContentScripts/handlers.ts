@@ -1,13 +1,16 @@
 import { CLASSNAME_PREFIX, closeTool, getShadowHost } from ".";
 import debounce from "lodash/debounce";
 import {
-  copyStyleSheetIntoPipWindow,
   createElementWithClassNames,
   deserializeQuerySelector,
-  getElementBackgroundColor,
-  getRelevantStyles,
   getSerializedQuerySelector,
 } from "@src/utils/helpers";
+import {
+  openPictureInPicture,
+  PIP_CLOSED_EVENT,
+  PIP_REQUEST_EVENT,
+  PIP_TARGET_ATTR,
+} from "./pip";
 import { StorageValue } from "@src/utils/storage";
 import { createCheckbox, createToolbarButton } from "./dom";
 import {
@@ -105,7 +108,9 @@ const setPreciseSelectionElement = (element: HTMLElement) => {
   const selectedElementClickHandler = (e: Event) => {
     e.preventDefault();
     e.stopPropagation();
-    createPictureInPicture(element).catch((e) => console.error(e));
+    createPictureInPicture(element).catch((e) => {
+      console.error("error while creating picture in picture", e);
+    });
   };
 
   buildPreciseSelectionPanel({
@@ -137,49 +142,18 @@ const handleElementClick = (e: Event) => {
   createPictureInPicture(selectedElement).catch((e) => console.error(e));
 };
 
-const copyStylesIntoPipWindow = (pipWindow: Window, element: HTMLElement) => {
-  copyStyleSheetIntoPipWindow(document, pipWindow);
-
-  pipWindow.document.documentElement.style.cssText = getRelevantStyles(
-    document.documentElement,
-  );
-  pipWindow.document.body.style.cssText = getRelevantStyles(document.body);
-
-  pipWindow.document.body.style.backgroundColor =
-    getElementBackgroundColor(element);
-};
-
 const saveQuerySelector = (element: HTMLElement) => {
+  // Compute the selector synchronously, while the element is still in place
+  // (it gets moved into the PiP window right after this).
   const querySelectorString = getSerializedQuerySelector(element);
-  lastUsedElementQuerySelector
-    .set(querySelectorString)
-    .catch((e) => console.error(e));
-};
-
-const getPipWindowSizeProportions = (
-  elementWidth: number,
-  elementHeight: number,
-) => {
-  let width = elementWidth;
-  let height = elementHeight;
-  if (elementWidth === 0 || elementHeight === 0) {
-    width = window.innerWidth;
-    height = window.innerHeight;
-  }
-  const aspectRatio = width / height;
-  const maxWidth = 500;
-  const maxHeight = 500;
-
-  if (width > height) {
-    width = Math.min(maxWidth, elementWidth);
-    return { width, height: width / aspectRatio };
-  }
-  height = Math.min(maxHeight, elementHeight);
-
-  return {
-    width: height * aspectRatio,
-    height,
-  };
+  // Firefox rejects the storage write (NS_ERROR_UNEXPECTED) when it shares a task
+  // with opening the PiP window (the synchronous requestWindow in the MAIN world).
+  // Deferring it to the next task lets it run after the PiP window has opened.
+  setTimeout(() => {
+    lastUsedElementQuerySelector
+      .set(querySelectorString)
+      .catch((e) => console.error("error while saving query selector", e));
+  }, 0);
 };
 
 const createPictureInPicture = async (element: HTMLElement) => {
@@ -191,51 +165,22 @@ const createPictureInPicture = async (element: HTMLElement) => {
   });
   saveQuerySelector(element);
 
-  if (!("documentPictureInPicture" in window)) {
-    console.error("Document Picture-in-Picture API is not supported");
-    alert("Document Picture-in-Picture API is not supported");
+  if (__BROWSER__ === "firefox") {
+    // Firefox: a PiP window created from the isolated content-script sandbox is a
+    // cross-origin object we can't touch, so create it in the page's MAIN world.
+    element.setAttribute(PIP_TARGET_ATTR, "");
+    window.addEventListener(PIP_CLOSED_EVENT, () => closeTool(), {
+      once: true,
+    });
+    // Synchronous dispatch keeps the click's transient activation valid for requestWindow.
+    // Use window.CustomEvent (page-realm constructor): a CustomEvent built in the isolated
+    // content-script compartment throws NS_ERROR_UNEXPECTED when dispatched onto the page
+    // window in Firefox (Bug 999586). window.CustomEvent === CustomEvent in Chrome.
+    window.dispatchEvent(new window.CustomEvent(PIP_REQUEST_EVENT));
     return;
   }
 
-  const boundingRect = element.getBoundingClientRect();
-  const { width, height } = boundingRect;
-  const { width: pipWidth, height: pipHeight } = getPipWindowSizeProportions(
-    width,
-    height,
-  );
-
-  const { previousSibling, nextSibling, parentElement: parent } = element;
-  const pipWindow = await documentPictureInPicture
-    .requestWindow({
-      width: pipWidth,
-      height: pipHeight,
-    })
-    .catch((e) => {
-      console.error("error while requesting window", e);
-      throw new Error("Error while requesting window");
-    });
-
-  copyStylesIntoPipWindow(pipWindow, element);
-
-  pipWindow.document.body.append(element);
-
-  pipWindow.addEventListener("resize", (e) => {
-    const newEvent = new Event("resize", { ...e });
-    window.dispatchEvent(newEvent);
-  });
-
-  pipWindow.addEventListener("pagehide", () => {
-    if (previousSibling) {
-      previousSibling?.after(element);
-    } else if (nextSibling) {
-      nextSibling?.before(element);
-    } else if (parent) {
-      parent.appendChild(element);
-    }
-    const newEvent = new Event("resize");
-    window.dispatchEvent(newEvent);
-    closeTool();
-  });
+  await openPictureInPicture(element, closeTool);
 };
 
 const handleScrollEvent = () => {

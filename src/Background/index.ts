@@ -9,6 +9,19 @@ const executeScriptOnTabId = (tabId: number) => {
     .catch((err) => {
       console.error("Error executing script", err);
     });
+
+  if (__BROWSER__ === "firefox") {
+    // Firefox runs PiP creation in the page's MAIN world (see pip-main.ts).
+    browser.scripting
+      .executeScript({
+        target: { tabId: tabId },
+        world: "MAIN",
+        files: ["pip-main.js"],
+      })
+      .catch((err) => {
+        console.error("Error injecting MAIN-world PiP script", err);
+      });
+  }
 };
 
 browser.contextMenus.create({

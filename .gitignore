@@ -16,6 +16,7 @@ dist/
 
 # packaged extension
 *.zip
+web-ext-artifacts/
 
 # Environment variables
 .env
