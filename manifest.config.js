@@ -5,7 +5,7 @@
 
 const NAME =
   "Picture-in-Picture Anything - Place Any Element on Top of your screen";
-const VERSION = "1.0.1";
+const VERSION = "1.1.0";
 const DESCRIPTION =
   "Native Picture-in-Picture mode for anything, not just videos.";
 
@@ -43,9 +43,6 @@ const getManifest = (browser) => {
   };
 
   if (browser === "firefox") {
-    // Firefox MV3 runs a background event page (no service worker), needs a
-    // stable add-on id for signing, and reserves Ctrl+Shift+P (New Private
-    // Window) so the default shortcut differs from Chrome.
     return {
       ...base,
       // Firefox/AMO caps "name" at 45 chars; Chrome keeps the longer listing name.
