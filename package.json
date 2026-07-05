@@ -17,6 +17,7 @@
     "firefox:lint": "web-ext lint -s dist/firefox",
     "package:firefox": "pnpm build:firefox && web-ext build -s dist/firefox -a web-ext-artifacts --overwrite-dest",
     "package:chrome": "pnpm build:chrome && zip -r pip-anything-extension-chrome.zip dist/chrome",
+    "package:source": "git archive --format=zip -o pip-anything-source.zip HEAD",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
