@@ -1,0 +1,1 @@
+The hot reloading is done in scripts/* files using Server-Sent Events. Where server.js sends an event to the backgroundClient.js indicating that reload is needed, backgroundClint then sends the message to contentScriptClient.js to reload content scripts.
